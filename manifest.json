@@ -2,7 +2,7 @@
   "name": "ADHAM SPLIT",
   "short_name": "ADHAM SPLIT",
   "description": "Track. Lift. Dominate.",
-  "start_url": "./adham-split-12-1-1-1.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
