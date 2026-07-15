@@ -1,6 +1,6 @@
 const CACHE_NAME = 'adham-split-v1';
 const APP_SHELL = [
-  './adham-split-12-1-1-1.html',
+  './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png'
@@ -22,8 +22,6 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Network-first for the HTML (so updates show up when online),
-// cache-first fallback for everything else (fonts, icons, etc).
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.mode === 'navigate' || req.destination === 'document') {
@@ -34,7 +32,7 @@ self.addEventListener('fetch', (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
           return res;
         })
-        .catch(() => caches.match(req).then((res) => res || caches.match('./adham-split-12-1-1-1.html')))
+        .catch(() => caches.match(req).then((res) => res || caches.match('./index.html')))
     );
     return;
   }
