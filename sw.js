@@ -1,4 +1,4 @@
-const CACHE_NAME = 'adham-split-v1';
+const CACHE_NAME = 'adham-split-v3';
 const APP_SHELL = [
   './index.html',
   './manifest.json',
@@ -24,31 +24,31 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  if (req.mode === 'navigate' || req.destination === 'document') {
-    event.respondWith(
-      fetch(req)
-        .then((res) => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-          return res;
-        })
-        .catch(() => caches.match(req).then((res) => res || caches.match('./index.html')))
-    );
-    return;
-  }
 
   event.respondWith(
     caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req)
+      const fetchAndUpdate = fetch(req)
         .then((res) => {
-          if (res && res.status === 200 && req.url.startsWith(self.location.origin)) {
+          if (res && res.status === 200) {
             const clone = res.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
           }
           return res;
         })
-        .catch(() => cached);
+        .catch(() => null);
+
+      if (cached) {
+        fetchAndUpdate;
+        return cached;
+      }
+
+      return fetchAndUpdate.then((res) => {
+        if (res) return res;
+        if (req.mode === 'navigate' || req.destination === 'document') {
+          return caches.match('./index.html');
+        }
+        return new Response('', { status: 504 });
+      });
     })
   );
 });
